@@ -3,6 +3,7 @@ package programmer.yans.spring.core.model.entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -22,12 +23,15 @@ public class Supplier implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty(message = "Supplier name must not be empty")
     @Column(nullable = false, length = 150)
     private String name;
 
+    @NotEmpty(message = "Supplier address must not be empty")
     @Column(nullable = false, length = 255)
     private String address;
 
+    @NotEmpty(message = "Supplier email must not be empty")
     @Column(nullable = false, length = 100, unique = true)
     private String email;
 
