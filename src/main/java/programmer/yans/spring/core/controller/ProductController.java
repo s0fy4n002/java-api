@@ -1,10 +1,16 @@
 package programmer.yans.spring.core.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import programmer.yans.spring.core.dto.ResponseData;
 import programmer.yans.spring.core.model.entity.Product;
 import programmer.yans.spring.core.service.ProductService;
 
@@ -14,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -22,34 +27,80 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public Iterable<Product> findAll(){
+    public Iterable<Product> findAll() {
         return productService.getAll();
     }
 
     @PostMapping
-    public Product create(@RequestBody Product product){
-        return productService.save(product);
+    public ResponseEntity<ResponseData<Product>> create(@Valid @RequestBody Product product, Errors errors) {
+
+        ResponseData<Product> responseData = new ResponseData<>();
+
+        if (errors.hasErrors()) {
+            for (ObjectError error : errors.getAllErrors()) {
+                if (error instanceof FieldError fieldError) {
+                    String field = fieldError.getField(); // name
+                    String message = fieldError.getDefaultMessage(); // name is required
+
+                    System.out.println(field + " => " + message);
+                    responseData.getMessages().add(field + " => " + message);
+                }
+            }
+            responseData.setStatus(false);
+            responseData.setPayload(null);
+
+            return ResponseEntity.badRequest().body(responseData);
+        }
+
+        responseData.getMessages().add("Product created successfully");
+        responseData.setStatus(true);
+        responseData.setPayload(productService.save(product));
+        return ResponseEntity.ok(responseData);
     }
 
     @GetMapping("/{id}")
-    public Product findById(@PathVariable("id") Long id){
-        return productService.getById(id);
+    public ResponseEntity<ResponseData<Product>> findById(@PathVariable("id") Long id) {
+        ResponseData<Product> responseData = new ResponseData<>();
+        Product product = productService.getById(id);
+        if (product != null) {
+            responseData.setStatus(true);
+            responseData.setPayload(product);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("Product not found");
+        }
+        return ResponseEntity.ok(responseData);
     }
 
     @GetMapping("/search/{name}")
-    public Iterable<Product> findByName(@PathVariable("name") String name){
-        return productService.findByName(name);
+    public ResponseEntity<ResponseData<Iterable<Product>>> findByName(@PathVariable("name") String name) {
+        ResponseData<Iterable<Product>> responseData = new ResponseData<>();
+        Iterable<Product> products = productService.findByName(name);
+        if (products != null) {
+            responseData.setStatus(true);
+            responseData.setPayload(products);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("No products found");
+        }
+        return ResponseEntity.ok(responseData);
     }
 
     @PutMapping("/{id}")
-    public Product update(@PathVariable("id") Long id, @RequestBody Product product){
+    public ResponseEntity<ResponseData<Product>> update(@PathVariable("id") Long id, @Valid @RequestBody Product product) {
         product.setId(id);
-        return productService.save(product);
+        ResponseData<Product> responseData = new ResponseData<>();
+        responseData.setStatus(true);
+        responseData.setPayload(productService.save(product));
+        return ResponseEntity.ok(responseData);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable("id") Long id){
+    public ResponseEntity<ResponseData<Void>> delete(@PathVariable("id") Long id) {
+        ResponseData<Void> responseData = new ResponseData<>();
         productService.deleteById(id);
+        responseData.setStatus(true);
+        return ResponseEntity.ok(responseData);
     }
-     
+
 }
