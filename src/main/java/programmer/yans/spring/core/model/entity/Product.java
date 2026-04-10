@@ -1,12 +1,18 @@
 package programmer.yans.spring.core.model.entity;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -20,14 +26,37 @@ public class Product implements Serializable {
     private Long id;
 
     @NotEmpty(message = "Product name must not be empty")
-    @Column(name ="product_name", length = 100)
+    @Column(name = "product_name", length = 100)
     private String name;
 
     @NotEmpty(message = "Product description must not be empty")
     @Column(name = "product_description", length = 500)
     private String description;
-    
+
     private Double price;
+
+    @ManyToOne
+    private Category category;
+
+    @ManyToMany
+    @JoinTable(name = "product_suppliers", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "supplier_id"))
+    private Set<Supplier> suppliers = new HashSet<>();
+
+    public Set<Supplier> getSuppliers() {
+        return suppliers;
+    }
+
+    public void setSuppliers(Set<Supplier> suppliers) {
+        this.suppliers = suppliers;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     public Product() {
     }
@@ -70,5 +99,5 @@ public class Product implements Serializable {
     public void setPrice(Double price) {
         this.price = price;
     }
-    
+
 }
