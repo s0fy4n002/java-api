@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import programmer.yans.spring.core.model.entity.Product;
 import programmer.yans.spring.core.service.ProductService;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +45,11 @@ public class ProductController {
     public Product update(@PathVariable("id") Long id, @RequestBody Product product){
         product.setId(id);
         return productService.save(product);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable("id") Long id){
+        productService.deleteById(id);
     }
      
 }
