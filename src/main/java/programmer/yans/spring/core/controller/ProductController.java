@@ -1,5 +1,7 @@
 package programmer.yans.spring.core.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import programmer.yans.spring.core.dto.ResponseData;
 import programmer.yans.spring.core.model.entity.Product;
+import programmer.yans.spring.core.model.entity.Supplier;
 import programmer.yans.spring.core.service.ProductService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,8 +30,11 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public Iterable<Product> findAll() {
-        return productService.getAll();
+    public ResponseEntity<ResponseData<Iterable<Product>>> findAll() {
+        ResponseData<Iterable<Product>> responseData = new ResponseData<>();
+        responseData.setStatus(true);
+        responseData.setPayload(productService.getAll());
+        return ResponseEntity.ok(responseData);
     }
 
     @PostMapping
@@ -102,5 +108,19 @@ public class ProductController {
         responseData.setStatus(true);
         return ResponseEntity.ok(responseData);
     }
+
+    @PostMapping("/{id}/add-supplier")
+    public ResponseEntity<ResponseData<Void>> addSupplierToProduct(
+            @PathVariable("id") Long productId,
+            @RequestBody Supplier supplier
+        ) {
+
+        productService.addSupplierToProduct(supplier, productId);
+
+        ResponseData<Void> responseData = new ResponseData<>();
+        responseData.setStatus(true);
+        return ResponseEntity.ok(responseData);
+    }
+    
 
 }

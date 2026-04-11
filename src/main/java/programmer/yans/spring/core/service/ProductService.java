@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import programmer.yans.spring.core.model.entity.Product;
+import programmer.yans.spring.core.model.entity.Supplier;
 import programmer.yans.spring.core.model.repository.ProductRepository;
+import programmer.yans.spring.core.model.repository.SupplierRepository;
 
 @Service
 @Transactional
@@ -15,6 +17,9 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private SupplierRepository supplierRepository;
 
     public Product save(Product product) {
         if (product == null) {
@@ -47,4 +52,14 @@ public class ProductService {
         }
         return productRepository.findByNameContains(name);
     }
+
+    public void addSupplierToProduct(Supplier supplier, Long productId) {
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("product tidak ditemukan"));
+
+        product.getSuppliers().add(supplier);
+        productRepository.save(product);
+    }
+
 }

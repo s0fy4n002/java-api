@@ -4,7 +4,7 @@ public class ProductData {
     private Long id;
     private String name;
     private String description;
-    private Double productPrice;
+    private Double price;
 
     public Long getId() {
         return id;
@@ -24,11 +24,11 @@ public class ProductData {
     public void setDescription(String description) {
         this.description = description;
     }
-    public Double getProductPrice() {
-        return productPrice;
+    public Double getPrice() {
+        return price;
     }
-    public void setProductPrice(Double productPrice) {
-        this.productPrice = productPrice;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
 }
