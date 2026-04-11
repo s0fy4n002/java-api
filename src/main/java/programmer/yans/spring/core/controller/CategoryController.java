@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import programmer.yans.spring.core.dto.CategoryData;
 import programmer.yans.spring.core.dto.ResponseData;
+import programmer.yans.spring.core.mapper.CategoryMapper;
 import programmer.yans.spring.core.model.entity.Category;
 import programmer.yans.spring.core.service.CategoryService;
 
@@ -26,9 +28,12 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private CategoryMapper categoryMapper;
+
     @PostMapping
-    public ResponseEntity<ResponseData<Category>> create(@Valid @RequestBody Category category, Errors errors) {
-        ResponseData<Category> responseData = new ResponseData<>();
+    public ResponseEntity<ResponseData<CategoryData>> create(@Valid @RequestBody Category category, Errors errors) {
+        ResponseData<CategoryData> responseData = new ResponseData<>();
 
         if (errors.hasErrors()) {
             for (ObjectError error : errors.getAllErrors()) {
@@ -50,7 +55,7 @@ public class CategoryController {
 
         responseData.setStatus(true);
         responseData.getMessages().add("Category created successfully");
-        responseData.setPayload(createdCategory);
+        responseData.setPayload(categoryMapper.toDTO(createdCategory));
         return ResponseEntity.ok(responseData);
     }
 
@@ -96,6 +101,7 @@ public class CategoryController {
             return ResponseEntity.badRequest().body(responseData);
         }
 
+        category.setId(id);
         Category updatedCategory = categoryService.save(category);
 
         responseData.setStatus(true);
