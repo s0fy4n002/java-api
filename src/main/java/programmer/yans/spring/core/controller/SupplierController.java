@@ -1,5 +1,7 @@
 package programmer.yans.spring.core.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -142,6 +144,15 @@ public class SupplierController {
     public ResponseEntity<ResponseData<Iterable<Supplier>>> searchLikeName(@RequestBody JsonNode json) {
         ResponseData<Iterable<Supplier>> responseData = new ResponseData<>();
         Iterable<Supplier> suppliers = supplierService.searchLikeName(json.get("name").asText());
+        responseData.setStatus(true);
+        responseData.setPayload(suppliers);
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("/search/like-name-or-email")
+    public ResponseEntity<ResponseData<List<Supplier>>> searchLikeNameOrEmail(@RequestBody JsonNode json) {
+        ResponseData<List<Supplier>> responseData = new ResponseData<>();
+        List<Supplier> suppliers = supplierService.searchLikeNameOrEmail(json.get("name").asText(), json.get("email").asText());
         responseData.setStatus(true);
         responseData.setPayload(suppliers);
         return ResponseEntity.ok(responseData);

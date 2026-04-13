@@ -9,7 +9,6 @@ import jakarta.transaction.TransactionScoped;
 import programmer.yans.spring.core.model.entity.Supplier;
 import programmer.yans.spring.core.model.repository.SupplierRepository;
 
-
 @Service
 @TransactionScoped
 public class SupplierService {
@@ -54,6 +53,13 @@ public class SupplierService {
             throw new IllegalArgumentException("name tidak boleh kosong");
         }
         return supplierRepository.findByNameContains(name);
+    }
+
+    public List<Supplier> searchLikeNameOrEmail(String name, String email) {
+        if ((name == null || name.isEmpty()) && (email == null || email.isEmpty())) {
+            throw new IllegalArgumentException("name atau email harus diisi");
+        }
+        return supplierRepository.findByNameContainsOrEmailContains(name, email);
     }
 
 }
