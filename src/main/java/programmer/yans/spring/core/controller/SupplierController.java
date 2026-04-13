@@ -138,4 +138,13 @@ public class SupplierController {
         return ResponseEntity.ok(responseData);
     }
 
+    @PostMapping("/search/like-name")
+    public ResponseEntity<ResponseData<Iterable<Supplier>>> searchLikeName(@RequestBody JsonNode json) {
+        ResponseData<Iterable<Supplier>> responseData = new ResponseData<>();
+        Iterable<Supplier> suppliers = supplierService.searchLikeName(json.get("name").asText());
+        responseData.setStatus(true);
+        responseData.setPayload(suppliers);
+        return ResponseEntity.ok(responseData);
+    }
+
 }

@@ -1,5 +1,7 @@
 package programmer.yans.spring.core.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +47,13 @@ public class SupplierService {
             throw new IllegalArgumentException("email tidak boleh kosong");
         }
         return supplierRepository.findByEmail(email);
+    }
+
+    public List<Supplier> searchLikeName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("name tidak boleh kosong");
+        }
+        return supplierRepository.findByNameContains(name);
     }
 
 }
