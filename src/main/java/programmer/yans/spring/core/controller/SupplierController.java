@@ -1,5 +1,7 @@
 package programmer.yans.spring.core.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -14,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import jakarta.validation.Valid;
 import programmer.yans.spring.core.dto.ResponseData;
+import programmer.yans.spring.core.dto.SearchData;
 import programmer.yans.spring.core.dto.SupplierData;
 import programmer.yans.spring.core.mapper.SupplierMapper;
 import programmer.yans.spring.core.model.entity.Supplier;
@@ -117,6 +122,39 @@ public class SupplierController {
         supplierService.deleteById(id);
         responseData.setStatus(true);
         responseData.getMessages().add("Supplier deleted successfully");
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("/search/by-email")
+    public ResponseEntity<ResponseData<Supplier>> findByEmail(@RequestBody JsonNode json) {
+        System.out.println("Searching for supplier with email: " + json.get("email").asText());
+        ResponseData<Supplier> responseData = new ResponseData<>();
+        Supplier supplier = supplierService.getByEmail(json.get("email").asText());
+        if (supplier != null) {
+            responseData.setStatus(true);
+            responseData.setPayload(supplier);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("Supplier not found");
+        }
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("/search/like-name")
+    public ResponseEntity<ResponseData<Iterable<Supplier>>> searchLikeName(@RequestBody JsonNode json) {
+        ResponseData<Iterable<Supplier>> responseData = new ResponseData<>();
+        Iterable<Supplier> suppliers = supplierService.searchLikeName(json.get("name").asText());
+        responseData.setStatus(true);
+        responseData.setPayload(suppliers);
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("/search/like-name-or-email")
+    public ResponseEntity<ResponseData<List<Supplier>>> searchLikeNameOrEmail(@RequestBody JsonNode json) {
+        ResponseData<List<Supplier>> responseData = new ResponseData<>();
+        List<Supplier> suppliers = supplierService.searchLikeNameOrEmail(json.get("name").asText(), json.get("email").asText());
+        responseData.setStatus(true);
+        responseData.setPayload(suppliers);
         return ResponseEntity.ok(responseData);
     }
 
