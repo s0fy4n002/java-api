@@ -69,4 +69,18 @@ public class ProductService {
         return productRepository.findProductByName(name);
     }
 
+    public List<Product> findByProductNameLike(String name){
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name tidak boleh kosong");
+        }
+        return productRepository.findProductByNameLike(name);
+    }
+
+    public List<Product> findByCategory(Long categoryId){
+        if (categoryId == null) {
+            throw new IllegalArgumentException("categoryId tidak boleh kosong");
+        }
+        return productRepository.findProductByCategory(categoryId);
+    }
+
 }

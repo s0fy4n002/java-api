@@ -40,11 +40,11 @@ public class Product implements Serializable {
     private Double price;
 
     @ManyToOne
-    private Category category;
+    private Category category; //otomatis akan ada category_id di table products
 
     @ManyToMany
-    @JoinTable(name = "product_suppliers", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "supplier_id"))
-    private Set<Supplier> suppliers = new HashSet<>();
+    @JoinTable(name = "product_suppliers", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "supplier_id")) //membuat table baru untuk relasi many to many dengan nama product_suppliers, dengan join column product_id dan supplier_id
+    private Set<Supplier> suppliers = new HashSet<>(); //karena many to many, maka harus menggunakan set untuk menghindari duplikasi data 
 
     public Set<Supplier> getSuppliers() {
         return suppliers;

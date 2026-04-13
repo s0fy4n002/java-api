@@ -1,6 +1,7 @@
 package programmer.yans.spring.core.controller;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +96,8 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseData<Product>> update(@PathVariable("id") Long id, @Valid @RequestBody Product product) {
+    public ResponseEntity<ResponseData<Product>> update(@PathVariable("id") Long id,
+            @Valid @RequestBody Product product) {
         product.setId(id);
         ResponseData<Product> responseData = new ResponseData<>();
         responseData.setStatus(true);
@@ -114,8 +116,7 @@ public class ProductController {
     @PostMapping("/{id}/add-supplier")
     public ResponseEntity<ResponseData<Void>> addSupplierToProduct(
             @PathVariable("id") Long productId,
-            @RequestBody Supplier supplier
-        ) {
+            @RequestBody Supplier supplier) {
 
         productService.addSupplierToProduct(supplier, productId);
 
@@ -139,5 +140,34 @@ public class ProductController {
         return ResponseEntity.ok(responseData);
     }
 
+    @PostMapping("/search/name-like")
+    public ResponseEntity<ResponseData<List<Product>>> getProductByNameLike(@RequestBody SearchData searchData) {
+        List<Product> products = productService.findByProductNameLike(searchData.getSearchKeyword());
+        ResponseData<List<Product>> responseData = new ResponseData<>();
+        if (products != null && !products.isEmpty()) {
+            responseData.setStatus(true);
+            responseData.setPayload(products);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("No products found");
+        }
+
+        return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("/search/category/{categoryId}")
+    public ResponseEntity<ResponseData<List<Product>>> getProductByCategory(@RequestBody @PathVariable("categoryId") Long categoryId) {
+        List<Product> products = productService.findByCategory(categoryId);
+        ResponseData<List<Product>> responseData = new ResponseData<>();
+        if (products != null && !products.isEmpty()) {
+            responseData.setStatus(true);
+            responseData.setPayload(products);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("No products found");
+        }
+
+        return ResponseEntity.ok(responseData);
+    }
 
 }

@@ -39,8 +39,8 @@ public class Supplier implements Serializable {
     @Column(nullable = false, length = 100, unique = true)
     private String email;
 
-    @ManyToMany(mappedBy = "suppliers")
-    private Set<Product> products = new HashSet<>();
+    @ManyToMany(mappedBy = "suppliers") //mappedBy untuk mengindikasikan bahwa relasi many to many ini sudah dikelola oleh entity Product melalui atribut suppliers
+    private Set<Product> products = new HashSet<>(); //karena many to many, maka harus menggunakan set untuk menghindari duplikasi data
 
     
 
