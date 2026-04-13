@@ -1,8 +1,6 @@
 package programmer.yans.spring.core.controller;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -156,8 +154,25 @@ public class ProductController {
     }
 
     @GetMapping("/search/category/{categoryId}")
-    public ResponseEntity<ResponseData<List<Product>>> getProductByCategory(@RequestBody @PathVariable("categoryId") Long categoryId) {
+    public ResponseEntity<ResponseData<List<Product>>> getProductByCategory(
+            @RequestBody @PathVariable("categoryId") Long categoryId) {
         List<Product> products = productService.findByCategory(categoryId);
+        ResponseData<List<Product>> responseData = new ResponseData<>();
+        if (products != null && !products.isEmpty()) {
+            responseData.setStatus(true);
+            responseData.setPayload(products);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("No products found");
+        }
+
+        return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("/search/supplier/{supplierId}")
+    public ResponseEntity<ResponseData<List<Product>>> getProductBySupplier(
+            @PathVariable("supplierId") Long supplierId) {
+        List<Product> products = productService.findBySupplier(supplierId);
         ResponseData<List<Product>> responseData = new ResponseData<>();
         if (products != null && !products.isEmpty()) {
             responseData.setStatus(true);

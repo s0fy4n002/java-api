@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import programmer.yans.spring.core.model.entity.Product;
 import programmer.yans.spring.core.model.entity.Supplier;
 import programmer.yans.spring.core.model.repository.ProductRepository;
-import programmer.yans.spring.core.model.repository.SupplierRepository;
 
 @Service
 @Transactional
@@ -19,7 +18,7 @@ public class ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private SupplierRepository supplierRepository;
+    private SupplierService supplierService;
 
     public Product save(Product product) {
         if (product == null) {
@@ -81,6 +80,17 @@ public class ProductService {
             throw new IllegalArgumentException("categoryId tidak boleh kosong");
         }
         return productRepository.findProductByCategory(categoryId);
+    }
+
+    public List<Product> findBySupplier(Long supplierId){
+        if (supplierId == null) {
+            throw new IllegalArgumentException("supplierId tidak boleh kosong");
+        }
+        Supplier supplier = supplierService.getById(supplierId);
+        if (supplier == null) {
+            throw new IllegalArgumentException("supplier tidak ditemukan");
+        }        
+        return productRepository.findProductBySupplier(supplier);
     }
 
 }
