@@ -1,5 +1,6 @@
 package programmer.yans.spring.core.controller;
 
+import java.util.HashSet;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import programmer.yans.spring.core.dto.ResponseData;
+import programmer.yans.spring.core.dto.SearchData;
 import programmer.yans.spring.core.model.entity.Product;
 import programmer.yans.spring.core.model.entity.Supplier;
 import programmer.yans.spring.core.service.ProductService;
@@ -121,6 +123,21 @@ public class ProductController {
         responseData.setStatus(true);
         return ResponseEntity.ok(responseData);
     }
-    
+
+    @PostMapping("/search/name")
+    public ResponseEntity<ResponseData<Product>> getProductByName(@RequestBody SearchData searchData) {
+        Product product = productService.findByProductName(searchData.getSearchKeyword());
+        ResponseData<Product> responseData = new ResponseData<>();
+        if (product != null) {
+            responseData.setStatus(true);
+            responseData.setPayload(product);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("Product not found");
+        }
+
+        return ResponseEntity.ok(responseData);
+    }
+
 
 }

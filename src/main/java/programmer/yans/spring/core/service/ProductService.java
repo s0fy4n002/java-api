@@ -62,4 +62,11 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public Product findByProductName(String name){
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name tidak boleh kosong");
+        }
+        return productRepository.findProductByName(name);
+    }
+
 }
