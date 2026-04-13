@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
@@ -21,7 +22,7 @@ import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "products")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Product implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +45,7 @@ public class Product implements Serializable {
 
     @ManyToMany
     @JoinTable(name = "product_suppliers", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "supplier_id")) //membuat table baru untuk relasi many to many dengan nama product_suppliers, dengan join column product_id dan supplier_id
+    @JsonManagedReference //untuk menghindari infinite recursion saat serialisasi JSON, karena relasi many to many bisa menyebabkan siklus referensi antara Product dan Supplier
     private Set<Supplier> suppliers = new HashSet<>(); //karena many to many, maka harus menggunakan set untuk menghindari duplikasi data 
 
     public Set<Supplier> getSuppliers() {

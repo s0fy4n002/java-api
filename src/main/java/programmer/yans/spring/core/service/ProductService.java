@@ -88,8 +88,8 @@ public class ProductService {
         }
         Supplier supplier = supplierService.getById(supplierId);
         if (supplier == null) {
-            throw new IllegalArgumentException("supplier tidak ditemukan");
-        }        
+            throw new IllegalArgumentException("supplier dengan id " + supplierId + " tidak ditemukan");
+        }
         return productRepository.findProductBySupplier(supplier);
     }
 

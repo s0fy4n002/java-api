@@ -8,7 +8,9 @@ import jakarta.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
@@ -20,7 +22,7 @@ import java.util.HashSet;
 
 @Entity
 @Table(name = "suppliers")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Supplier implements Serializable {
 
     @Id
@@ -40,6 +42,7 @@ public class Supplier implements Serializable {
     private String email;
 
     @ManyToMany(mappedBy = "suppliers") //mappedBy untuk mengindikasikan bahwa relasi many to many ini sudah dikelola oleh entity Product melalui atribut suppliers
+    @JsonBackReference //untuk menghindari infinite recursion saat serialisasi JSON, karena relasi many to many bisa menyebabkan siklus referensi antara Supplier dan Product
     private Set<Product> products = new HashSet<>(); //karena many to many, maka harus menggunakan set untuk menghindari duplikasi data
 
     
