@@ -5,4 +5,6 @@ import programmer.yans.spring.core.model.entity.Supplier;
 
 public interface SupplierRepository extends CrudRepository<Supplier, Long>{
     
+    Supplier findByEmail(String email);
+
 }

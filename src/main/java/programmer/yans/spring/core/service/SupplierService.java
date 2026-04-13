@@ -40,4 +40,11 @@ public class SupplierService {
         supplierRepository.deleteById(id);
     }
 
+    public Supplier getByEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("email tidak boleh kosong");
+        }
+        return supplierRepository.findByEmail(email);
+    }
+
 }
