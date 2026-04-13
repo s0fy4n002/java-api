@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import programmer.yans.spring.core.model.entity.Product;
 import programmer.yans.spring.core.model.entity.Supplier;
 import programmer.yans.spring.core.model.repository.ProductRepository;
-import programmer.yans.spring.core.model.repository.SupplierRepository;
 
 @Service
 @Transactional
@@ -19,7 +18,7 @@ public class ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private SupplierRepository supplierRepository;
+    private SupplierService supplierService;
 
     public Product save(Product product) {
         if (product == null) {
@@ -60,6 +59,38 @@ public class ProductService {
 
         product.getSuppliers().add(supplier);
         productRepository.save(product);
+    }
+
+    public Product findByProductName(String name){
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name tidak boleh kosong");
+        }
+        return productRepository.findProductByName(name);
+    }
+
+    public List<Product> findByProductNameLike(String name){
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name tidak boleh kosong");
+        }
+        return productRepository.findProductByNameLike(name);
+    }
+
+    public List<Product> findByCategory(Long categoryId){
+        if (categoryId == null) {
+            throw new IllegalArgumentException("categoryId tidak boleh kosong");
+        }
+        return productRepository.findProductByCategory(categoryId);
+    }
+
+    public List<Product> findBySupplier(Long supplierId){
+        if (supplierId == null) {
+            throw new IllegalArgumentException("supplierId tidak boleh kosong");
+        }
+        Supplier supplier = supplierService.getById(supplierId);
+        if (supplier == null) {
+            throw new IllegalArgumentException("supplier dengan id " + supplierId + " tidak ditemukan");
+        }
+        return productRepository.findProductBySupplier(supplier);
     }
 
 }

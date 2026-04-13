@@ -1,6 +1,6 @@
 package programmer.yans.spring.core.controller;
 
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import programmer.yans.spring.core.dto.ResponseData;
+import programmer.yans.spring.core.dto.SearchData;
 import programmer.yans.spring.core.model.entity.Product;
 import programmer.yans.spring.core.model.entity.Supplier;
 import programmer.yans.spring.core.service.ProductService;
@@ -93,7 +94,8 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseData<Product>> update(@PathVariable("id") Long id, @Valid @RequestBody Product product) {
+    public ResponseEntity<ResponseData<Product>> update(@PathVariable("id") Long id,
+            @Valid @RequestBody Product product) {
         product.setId(id);
         ResponseData<Product> responseData = new ResponseData<>();
         responseData.setStatus(true);
@@ -112,8 +114,7 @@ public class ProductController {
     @PostMapping("/{id}/add-supplier")
     public ResponseEntity<ResponseData<Void>> addSupplierToProduct(
             @PathVariable("id") Long productId,
-            @RequestBody Supplier supplier
-        ) {
+            @RequestBody Supplier supplier) {
 
         productService.addSupplierToProduct(supplier, productId);
 
@@ -121,6 +122,67 @@ public class ProductController {
         responseData.setStatus(true);
         return ResponseEntity.ok(responseData);
     }
-    
+
+    @PostMapping("/search/name")
+    public ResponseEntity<ResponseData<Product>> getProductByName(@RequestBody SearchData searchData) {
+        Product product = productService.findByProductName(searchData.getSearchKeyword());
+        ResponseData<Product> responseData = new ResponseData<>();
+        if (product != null) {
+            responseData.setStatus(true);
+            responseData.setPayload(product);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("Product not found");
+        }
+
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("/search/name-like")
+    public ResponseEntity<ResponseData<List<Product>>> getProductByNameLike(@RequestBody SearchData searchData) {
+        List<Product> products = productService.findByProductNameLike(searchData.getSearchKeyword());
+        ResponseData<List<Product>> responseData = new ResponseData<>();
+        if (products != null && !products.isEmpty()) {
+            responseData.setStatus(true);
+            responseData.setPayload(products);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("No products found");
+        }
+
+        return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("/search/category/{categoryId}")
+    public ResponseEntity<ResponseData<List<Product>>> getProductByCategory(
+            @RequestBody @PathVariable("categoryId") Long categoryId) {
+        List<Product> products = productService.findByCategory(categoryId);
+        ResponseData<List<Product>> responseData = new ResponseData<>();
+        if (products != null && !products.isEmpty()) {
+            responseData.setStatus(true);
+            responseData.setPayload(products);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("No products found");
+        }
+
+        return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("/search/supplier/{supplierId}")
+    public ResponseEntity<ResponseData<List<Product>>> getProductBySupplier(
+            @PathVariable("supplierId") Long supplierId) {
+        List<Product> products = productService.findBySupplier(supplierId);
+        ResponseData<List<Product>> responseData = new ResponseData<>();
+        if (products != null && !products.isEmpty()) {
+            responseData.setStatus(true);
+            responseData.setPayload(products);
+        } else {
+            responseData.setStatus(false);
+            responseData.getMessages().add("No products found");
+        }
+
+        return ResponseEntity.ok(responseData);
+    }
 
 }
