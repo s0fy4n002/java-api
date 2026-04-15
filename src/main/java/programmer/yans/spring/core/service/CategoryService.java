@@ -1,6 +1,7 @@
 package programmer.yans.spring.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.TransactionScoped;
@@ -37,6 +38,13 @@ public class CategoryService {
             throw new IllegalArgumentException("id tidak boleh kosong");
         }
         categoryRepository.deleteById(id);
+    }
+
+    public Iterable<Category> searchLikeName(String name, Pageable pageable) {
+        if (name == null) {
+            throw new IllegalArgumentException("name tidak boleh kosong");
+        }
+        return categoryRepository.findByNameContains(name, pageable);
     }
     
 }
