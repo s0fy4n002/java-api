@@ -62,4 +62,18 @@ public class SupplierService {
         return supplierRepository.findByNameContainsOrEmailContains(name, email);
     }
 
+    public List<Supplier> searchLikeNameOrderByIdDesc(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("name tidak boleh kosong");
+        }
+        return supplierRepository.findByNameContainsOrderByIdDesc(name);
+    }
+
+    public List<Supplier> searchLikeNameOrderByIdAsc(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("name tidak boleh kosong");
+        }
+        return supplierRepository.findByNameContainsOrderByIdAsc(name);
+    }
+
 }

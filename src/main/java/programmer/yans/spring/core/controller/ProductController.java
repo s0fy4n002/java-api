@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import jakarta.validation.Valid;
 import programmer.yans.spring.core.dto.ResponseData;
 import programmer.yans.spring.core.dto.SearchData;
@@ -138,7 +140,7 @@ public class ProductController {
         return ResponseEntity.ok(responseData);
     }
 
-    @PostMapping("/search/name-like")
+    @PostMapping("/search/like-name")
     public ResponseEntity<ResponseData<List<Product>>> getProductByNameLike(@RequestBody SearchData searchData) {
         List<Product> products = productService.findByProductNameLike(searchData.getSearchKeyword());
         ResponseData<List<Product>> responseData = new ResponseData<>();
@@ -182,6 +184,24 @@ public class ProductController {
             responseData.getMessages().add("No products found");
         }
 
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("/search/like-name-order-by-id-desc")
+    public ResponseEntity<ResponseData<List<Product>>> searchLikeNameOrderByIdDesc(@RequestBody JsonNode json) {
+        ResponseData<List<Product>> responseData = new ResponseData<>();
+        List<Product> products = productService.searchLikeNameOrderByIdDesc(json.get("name").asText());
+        responseData.setStatus(true);
+        responseData.setPayload(products);
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("/search/like-name-order-by-id-asc")
+    public ResponseEntity<ResponseData<List<Product>>> searchLikeNameOrderByIdAsc(@RequestBody JsonNode json) {
+        ResponseData<List<Product>> responseData = new ResponseData<>();
+        List<Product> products = productService.searchLikeNameOrderByIdAsc(json.get("name").asText());
+        responseData.setStatus(true);
+        responseData.setPayload(products);
         return ResponseEntity.ok(responseData);
     }
 

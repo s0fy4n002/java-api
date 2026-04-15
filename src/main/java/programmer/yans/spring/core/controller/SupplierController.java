@@ -158,4 +158,22 @@ public class SupplierController {
         return ResponseEntity.ok(responseData);
     }
 
+    @PostMapping("/search/like-name-order-by-id-desc")
+    public ResponseEntity<ResponseData<List<Supplier>>> searchLikeNameOrderByIdDesc(@RequestBody JsonNode json) {
+        ResponseData<List<Supplier>> responseData = new ResponseData<>();
+        List<Supplier> suppliers = supplierService.searchLikeNameOrderByIdDesc(json.get("name").asText());
+        responseData.setStatus(true);
+        responseData.setPayload(suppliers);
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("/search/like-name-order-by-id-asc")
+    public ResponseEntity<ResponseData<List<Supplier>>> searchLikeNameOrderByIdAsc(@RequestBody JsonNode json) {
+        ResponseData<List<Supplier>> responseData = new ResponseData<>();
+        List<Supplier> suppliers = supplierService.searchLikeNameOrderByIdAsc(json.get("name").asText());
+        responseData.setStatus(true);
+        responseData.setPayload(suppliers);
+        return ResponseEntity.ok(responseData);
+    }
+
 }

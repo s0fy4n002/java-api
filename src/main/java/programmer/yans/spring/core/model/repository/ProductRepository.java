@@ -13,6 +13,11 @@ import jakarta.websocket.server.PathParam;
 public interface ProductRepository extends CrudRepository<Product, Long> {
 	List<Product> findByNameContains(String name);
 
+
+    List<Product> findByNameContainsOrderByIdDesc(String name);
+
+    List<Product> findByNameContainsOrderByIdAsc(String name);
+
 	@Query("SELECT p FROM Product p WHERE p.name = :name")
 	public Product findProductByName(@PathParam("name") String name);
 

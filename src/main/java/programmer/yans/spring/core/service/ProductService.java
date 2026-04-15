@@ -93,4 +93,18 @@ public class ProductService {
         return productRepository.findProductBySupplier(supplier);
     }
 
+    public List<Product> searchLikeNameOrderByIdDesc(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name tidak boleh kosong");
+        }
+        return productRepository.findByNameContainsOrderByIdDesc(name);
+    }
+
+    public List<Product> searchLikeNameOrderByIdAsc(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name tidak boleh kosong");
+        }
+        return productRepository.findByNameContainsOrderByIdAsc(name);
+    }
+
 }
