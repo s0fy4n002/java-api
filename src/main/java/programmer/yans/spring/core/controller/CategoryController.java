@@ -3,6 +3,8 @@ package programmer.yans.spring.core.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -123,12 +125,16 @@ public class CategoryController {
         return ResponseEntity.ok(responseData);
     }
 
-    @PostMapping("/search/{size}/{page}")
-    public ResponseEntity<ResponseData<Iterable<Category>>> searchLikeName(@RequestBody JsonNode json, @PathVariable int size, @PathVariable int page) {
+    @PostMapping({"/search/{size}/{page}", "/search/{size}/{page}/{sort}"})
+    public ResponseEntity<ResponseData<Iterable<Category>>> searchLikeName(@RequestBody JsonNode json, @PathVariable int size, @PathVariable int page, @PathVariable(required = false) String sort) {
         ResponseData<Iterable<Category>> responseData = new ResponseData<>();
         responseData.setStatus(true);
         String name = json.get("name").asText();
-        responseData.setPayload(categoryService.searchLikeName(name, PageRequest.of(page, size)));
+        Pageable pageable = PageRequest.of(page, size);
+        if(sort != null && (sort.equalsIgnoreCase("asc") || sort.equalsIgnoreCase("desc"))){
+            pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, "id"));
+        }
+        responseData.setPayload(categoryService.searchLikeName(name, pageable));
         return ResponseEntity.ok(responseData);
     }
 
