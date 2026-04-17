@@ -46,5 +46,12 @@ public class CategoryService {
         }
         return categoryRepository.findByNameContains(name, pageable);
     }
+
+    public Iterable<Category> saveBatch(Iterable<Category> categories) {
+        if (categories == null) {
+            throw new IllegalArgumentException("categories tidak boleh kosong");
+        }
+        return categoryRepository.saveAll(categories);
+    }
     
 }

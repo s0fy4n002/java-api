@@ -1,5 +1,7 @@
 package programmer.yans.spring.core.controller;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -126,7 +129,12 @@ public class CategoryController {
     }
 
     @PostMapping({"/search/{size}/{page}", "/search/{size}/{page}/{sort}"})
-    public ResponseEntity<ResponseData<Iterable<Category>>> searchLikeName(@RequestBody JsonNode json, @PathVariable int size, @PathVariable int page, @PathVariable(required = false) String sort) {
+    public ResponseEntity<ResponseData<Iterable<Category>>> searchLikeNameWithPaging(
+        @RequestBody JsonNode json, 
+        @PathVariable int size, 
+        @PathVariable int page, 
+        @PathVariable(required = false) String sort
+    ) {
         ResponseData<Iterable<Category>> responseData = new ResponseData<>();
         responseData.setStatus(true);
         String name = json.get("name").asText();
@@ -135,6 +143,31 @@ public class CategoryController {
             pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, "id"));
         }
         responseData.setPayload(categoryService.searchLikeName(name, pageable));
+        return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping({"/search/{size}/{page}", "/search/{size}/{page}/{sort}"})
+    public ResponseEntity<ResponseData<Iterable<Category>>> getSearchLikeNameWithPaging(
+        @RequestParam String name, 
+        @PathVariable int size, 
+        @PathVariable int page, 
+        @PathVariable(required = false) String sort
+    ) {
+        ResponseData<Iterable<Category>> responseData = new ResponseData<>();
+        responseData.setStatus(true);
+        Pageable pageable = PageRequest.of(page, size);
+        if(sort != null && (sort.equalsIgnoreCase("asc") || sort.equalsIgnoreCase("desc"))){
+            pageable = PageRequest.of(page, size, Sort.by(sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, "id"));
+        }
+        responseData.setPayload(categoryService.searchLikeName(name, pageable));
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("/create-all")
+    public ResponseEntity<ResponseData<Iterable<Category>>> createBatch(@RequestBody Category[] categories) {
+        ResponseData<Iterable<Category>> responseData = new ResponseData<>();
+        responseData.setStatus(true);
+        responseData.setPayload(categoryService.saveBatch(Arrays.asList(categories)));
         return ResponseEntity.ok(responseData);
     }
 
